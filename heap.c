@@ -25,39 +25,39 @@ void swap(void *x, void *y) {
     y = aux;
 }
 
-int calcular_pos_padre(int hijo){
+size_t calcular_pos_padre(size_t hijo){
     return (hijo - 1) / 2;
 }
 
-int calcular_pos_hijo(int padre, int n){
+size_t calcular_pos_hijo(size_t padre, size_t n){
     return 2 * padre + n;
 }
 
-int calcular_hijo_mayor(void** datos, cmp_func_t cmp, int hijo_izq, int hijo_der){
+size_t calcular_hijo_mayor(void** datos, cmp_func_t cmp, size_t hijo_izq, size_t hijo_der){
     if (cmp(datos[hijo_der], datos[hijo_izq]) >= 0) return hijo_der;
 	return hijo_izq;
 }
 
-int calcular_max(void** datos, cmp_func_t cmp, int padre, int hijo_izq, int hijo_der){
-    int hijo_mayor = calcular_hijo_mayor(datos, cmp, hijo_izq, hijo_der);
+size_t calcular_max(void** datos, cmp_func_t cmp, size_t padre, size_t hijo_izq, size_t hijo_der){
+    size_t hijo_mayor = calcular_hijo_mayor(datos, cmp, hijo_izq, hijo_der);
     if (cmp(datos[padre], datos[hijo_mayor]) >= 0) return padre;
     return hijo_mayor;
 }
 
-void upheap(heap_t* heap, int hijo, cmp_func_t cmp){
+void upheap(heap_t* heap, size_t hijo, cmp_func_t cmp){
     if(hijo == 0) return;
-    int padre = calcular_pos_padre(hijo);
+    size_t padre = calcular_pos_padre(hijo);
     if(cmp(heap->datos[padre], heap->datos[hijo]) < 0){
         swap(heap->datos[padre], heap->datos[hijo]);
         upheap(heap, padre, cmp);
     }
 }
 
-void downheap(heap_t* heap, size_t tam, int padre, cmp_func_t cmp){
+void downheap(heap_t* heap, size_t tam, size_t padre, cmp_func_t cmp){
     if(padre >= tam - 1) return;
-    int hijo_izq = calcular_pos_hijo(padre, 1);
-    int hijo_der = calcular_pos_hijo(padre, 2);
-    int max = calcular_max(heap->datos, cmp, padre, hijo_izq, hijo_der);
+    size_t hijo_izq = calcular_pos_hijo(padre, 1);
+    size_t hijo_der = calcular_pos_hijo(padre, 2);
+    size_t max = calcular_max(heap->datos, cmp, padre, hijo_izq, hijo_der);
     if(cmp(heap->datos[max], heap->datos[padre]) != 0){
         swap(heap->datos[padre], heap->datos[max]);
         downheap(heap, tam, max, cmp);
@@ -77,6 +77,11 @@ bool heap_redimensionar(heap_t* heap, size_t nuevo_tam){
 bool heap_esta_lleno(heap_t* heap){
     return heap->cant == heap->tam;
 }
+
+bool heap_hay_que_achicar(heap_t* heap){
+    return heap->cant * 4 <= heap->tam;
+}
+
 /* *****************************************************************
  *                    PRIMITIVAS DEL HEAP
  * *****************************************************************/
@@ -95,7 +100,9 @@ heap_t *heap_crear(cmp_func_t cmp){
     return heap;
 }
 
-heap_t *heap_crear_arr(void *arreglo[], size_t n, cmp_func_t cmp);
+heap_t *heap_crear_arr(void *arreglo[], size_t n, cmp_func_t cmp){
+    return NULL;
+}
 
 void heap_destruir(heap_t *heap, void (*destruir_elemento)(void *e)){
     if(destruir_elemento){
@@ -120,7 +127,7 @@ bool heap_encolar(heap_t *heap, void *elem){
     if (heap_esta_lleno(heap)) heap_redimensionar(heap, heap->tam*FACTOR_REDIMENSION);
     heap->datos[heap->cant] = elem;
     heap->cant++;
-    upheap(heap, (int)heap->cant-1, heap->cmp);
+    upheap(heap, heap->cant-1, heap->cmp);
     return true;
 }
 
@@ -131,7 +138,18 @@ void *heap_ver_max(const heap_t *heap){
     return heap->datos[0];
 }
 
-void *heap_desencolar(heap_t *heap);
+void *heap_desencolar(heap_t *heap){
+    size_t pos_ult = heap->tam - 1;
+    void* ultimo = heap->datos[pos_ult];
+    void* primero = heap_ver_max(heap);
+    swap(ultimo, primero);
+    downheap(heap, heap->tam, pos_ult, heap->cmp);
+    heap->cant--;
+    if(heap_hay_que_achicar(heap)){
+        heap_redimensionar(heap, heap->tam / 2);
+    }
+    return primero;
+}
 
 /* *****************************************************************
  *                    HEAP SORT
