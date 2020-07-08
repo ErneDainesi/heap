@@ -95,19 +95,7 @@ heap_t *heap_crear(cmp_func_t cmp){
     return heap;
 }
 
-heap_t *heap_crear_arr(void *arreglo[], size_t n, cmp_func_t cmp){
-    heap_t* heap = malloc(sizeof(heap_t));
-    if(!heap) return NULL;
-    heap->datos = malloc(sizeof(void*) * n);
-    if(!heap->datos){
-        free(heap);
-        return NULL;
-    }
-    for (size_t i = 0; i < n; i++){
-        heap->datos[i] = arreglo[i];
-        heap->cant++;
-    }
-}
+heap_t *heap_crear_arr(void *arreglo[], size_t n, cmp_func_t cmp);
 
 void heap_destruir(heap_t *heap, void (*destruir_elemento)(void *e)){
     if(destruir_elemento){
