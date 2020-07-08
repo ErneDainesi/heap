@@ -10,9 +10,8 @@
  * *****************************************************************/
 
 int cmp(const void* a, const void* b){
-    if(a < b) return -1;
-    if(a > b) return 1;
-    return 0;
+    if(a == b) return 0;
+    return a > b ? 1 : -1;
 }
 
 int cmp_char(const void* a, const void* b){
@@ -51,7 +50,7 @@ static void prueba_heap_encolar()
     print_test("Prueba heap desencolar es valor1", heap_desencolar(heap) == &valor1);
     print_test("Prueba heap esta vacio", heap_esta_vacio(heap));
 
-    /* Inserta otros 2 valores y no los desencola (se destruyen con el heap) */
+    /* Inserta otros 2 valores y verifica que se mantenga la invariante de heap */
     print_test("Prueba heap encolar valor2", heap_encolar(heap, &valor2));
     print_test("Prueba heap no esta vacio", !heap_esta_vacio(heap));
     print_test("Prueba heap la cantidad de elementos es 1", heap_cantidad(heap) == 1);
@@ -60,6 +59,7 @@ static void prueba_heap_encolar()
     print_test("Prueba heap encolar valor3", heap_encolar(heap, &valor3));
     print_test("Prueba heap la cantidad de elementos es 2", heap_cantidad(heap) == 2);
     print_test("Prueba heap ver max es valor3", heap_ver_max(heap) == &valor3);
+    print_test("Prueba heap desencolar es valor3", heap_desencolar(heap) == &valor3);
 
     heap_destruir(heap, NULL);
 }
