@@ -10,8 +10,8 @@
  * *****************************************************************/
 
 int cmp(const void* a, const void* b){
-    if(a == b) return 0;
-    return a > b ? 1 : -1;
+    if(*(int*)a == *(int*)b) return 0;
+    return *(int*)a > *(int*)b ? 1 : -1;
 }
 
 int cmp_char(const void* a, const void* b){
