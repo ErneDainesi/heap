@@ -139,12 +139,12 @@ void *heap_ver_max(const heap_t *heap){
 }
 
 void *heap_desencolar(heap_t *heap){
-    size_t pos_ult = heap->tam - 1;
+    size_t pos_ult = heap->cant - 1;
     void* ultimo = heap->datos[pos_ult];
     void* primero = heap_ver_max(heap);
     swap(ultimo, primero);
-    downheap(heap, heap->tam, pos_ult, heap->cmp);
     heap->cant--;
+    downheap(heap, heap->tam, 0, heap->cmp);
     if(heap_hay_que_achicar(heap)){
         heap_redimensionar(heap, heap->tam / 2);
     }
