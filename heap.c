@@ -89,7 +89,7 @@ bool heap_hay_que_achicar(heap_t* heap){
 heap_t *heap_crear(cmp_func_t cmp){
     heap_t* heap = malloc(sizeof(heap_t));
     if(!heap) return NULL;
-    heap->datos = malloc(sizeof(void*) * TAM_INI);
+    heap->datos = calloc(1, sizeof(void*) * TAM_INI);
     if(!heap->datos){
         free(heap);
         return NULL;
@@ -139,6 +139,7 @@ void *heap_ver_max(const heap_t *heap){
 }
 
 void *heap_desencolar(heap_t *heap){
+    if(heap_esta_vacio(heap)) return NULL;
     size_t pos_ult = heap->cant - 1;
     void* ultimo = heap->datos[pos_ult];
     void* primero = heap_ver_max(heap);
