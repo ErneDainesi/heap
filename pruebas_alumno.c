@@ -30,7 +30,7 @@ static void prueba_crear_heap_vacio()
     print_test("Prueba heap crear heap vacio", heap);
     print_test("Prueba heap esta vacio", heap_esta_vacio(heap));
     print_test("Prueba heap ver maximo es false", !heap_ver_max(heap));
-    print_test("Prueba heap desencolar es NULL", heap_desencolar == NULL);
+    print_test("Prueba heap desencolar es NULL", heap_desencolar(heap) == NULL);
 
     heap_destruir(heap, NULL);
 }
