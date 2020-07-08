@@ -32,13 +32,15 @@ int calcular_pos_hijo(int padre, int n){
     return 2 * padre + n;
 }
 
-int calcular_max(heap_t* heap, cmp_func_t cmp, int padre, int hijo_izq, int hijo_der){
-    if( (cmp(heap->datos[padre], heap->datos[hijo_izq]) >= 0) && (cmp(heap->datos[padre], heap->datos[hijo_der]) >= 0) )
-        return padre;
-    if( (cmp(heap->datos[hijo_izq], heap->datos[padre]) >= 0) && (cmp(heap->datos[hijo_izq], heap->datos[hijo_der]) >= 0) )
-        return hijo_izq;
-    if( (cmp(heap->datos[hijo_der], heap->datos[padre]) >= 0) && (cmp(heap->datos[hijo_der], heap->datos[hijo_izq]) >= 0) )
-        return hijo_der;
+int calcular_hijo_mayor(void** datos, cmp_func_t cmp, int hijo_izq, int hijo_der){
+    if (cmp(datos[hijo_der], datos[hijo_izq]) >= 0) return hijo_der;
+	return hijo_izq;
+}
+
+int calcular_max(void** datos, cmp_func_t cmp, int padre, int hijo_izq, int hijo_der){
+    int hijo_mayor = calcular_hijo_mayor(datos, cmp, hijo_izq, hijo_der);
+    if (cmp(datos[padre], datos[hijo_mayor]) >= 0) return padre;
+    return hijo_mayor;
 }
 
 void upheap(heap_t* heap, int hijo, cmp_func_t cmp){
@@ -54,7 +56,7 @@ void downheap(heap_t* heap, size_t tam, int padre, cmp_func_t cmp){
     if(padre >= tam - 1) return;
     int hijo_izq = calcular_pos_hijo(padre, 1);
     int hijo_der = calcular_pos_hijo(padre, 2);
-    int max = calcular_max(heap, cmp, padre, hijo_izq, hijo_der);
+    int max = calcular_max(heap->datos, cmp, padre, hijo_izq, hijo_der);
     if(cmp(heap->datos[max], heap->datos[padre]) != 0){
         swap(heap->datos[padre], heap->datos[max]);
         downheap(heap, tam, max, cmp);
