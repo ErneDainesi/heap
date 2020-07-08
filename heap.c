@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "heap.h"
 #define TAM_INI 10
+#define FACTOR_REDIMENSION 2
 
 /* *****************************************************************
  *                        ESTRUCTURAS
@@ -63,6 +64,19 @@ void downheap(heap_t* heap, size_t tam, int padre, cmp_func_t cmp){
     }
 }
 
+bool heap_redimensionar(heap_t* heap, size_t nuevo_tam){
+    void* datos_nuevo = realloc(heap->datos, nuevo_tam * sizeof(void*));
+    if (nuevo_tam > 0 && !datos_nuevo) {
+        return false;
+    }
+	heap->tam = nuevo_tam;
+    heap->datos	= datos_nuevo;
+    return true;
+}
+
+bool heap_esta_lleno(heap_t* heap){
+    return heap->cant == heap->tam;
+}
 /* *****************************************************************
  *                    PRIMITIVAS DEL HEAP
  * *****************************************************************/
@@ -81,7 +95,19 @@ heap_t *heap_crear(cmp_func_t cmp){
     return heap;
 }
 
-heap_t *heap_crear_arr(void *arreglo[], size_t n, cmp_func_t cmp);
+heap_t *heap_crear_arr(void *arreglo[], size_t n, cmp_func_t cmp){
+    heap_t* heap = malloc(sizeof(heap_t));
+    if(!heap) return NULL;
+    heap->datos = malloc(sizeof(void*) * n);
+    if(!heap->datos){
+        free(heap);
+        return NULL;
+    }
+    for (size_t i = 0; i < n; i++){
+        heap->datos[i] = arreglo[i];
+        heap->cant++;
+    }
+}
 
 void heap_destruir(heap_t *heap, void (*destruir_elemento)(void *e)){
     if(destruir_elemento){
@@ -101,7 +127,14 @@ bool heap_esta_vacio(const heap_t *heap){
     return heap->cant == 0;
 }
 
-bool heap_encolar(heap_t *heap, void *elem);
+bool heap_encolar(heap_t *heap, void *elem){
+    if (!elem) return false;
+    if (heap_esta_lleno(heap)) heap_redimensionar(heap, heap->tam*FACTOR_REDIMENSION);
+    heap->datos[heap->cant] = elem;
+    heap->cant++;
+    upheap(heap, (int)heap->cant-1, heap->cmp);
+    return true;
+}
 
 void *heap_ver_max(const heap_t *heap){
     if(heap_esta_vacio(heap)){
