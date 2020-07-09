@@ -29,7 +29,11 @@ size_t calcular_pos_padre(size_t hijo){
     return (hijo - 1) / 2;
 }
 
-size_t calcular_pos_hijo(size_t padre, size_t n){
+size_t calcular_pos_hijo(size_t padre, size_t n, size_t cant){
+    //si la pos hijo no existe en el array devuelve al padre
+    if (2 * padre + n > cant){
+        return padre;
+    }
     return 2 * padre + n;
 }
 
@@ -55,8 +59,8 @@ void upheap(heap_t* heap, size_t hijo, cmp_func_t cmp){
 
 void downheap(heap_t* heap, size_t tam, size_t padre, cmp_func_t cmp){
     if(padre >= tam - 1) return;
-    size_t hijo_izq = calcular_pos_hijo(padre, 1);
-    size_t hijo_der = calcular_pos_hijo(padre, 2);
+    size_t hijo_izq = calcular_pos_hijo(padre, 1, heap->cant);
+    size_t hijo_der = calcular_pos_hijo(padre, 2, heap->cant);
     size_t max = calcular_max(heap->datos, cmp, padre, hijo_izq, hijo_der);
     if(cmp(heap->datos[max], heap->datos[padre]) != 0){
         swap(heap->datos[padre], heap->datos[max]);
@@ -82,6 +86,13 @@ bool heap_hay_que_achicar(heap_t* heap){
     return heap->cant * 4 <= heap->tam;
 }
 
+
+void heapify(heap_t* heap, size_t n, cmp_func_t cmp){
+	for(size_t i = n-1; i <= 0; i--){
+        downheap(heap, n, i, cmp);
+	}
+}
+
 /* *****************************************************************
  *                    PRIMITIVAS DEL HEAP
  * *****************************************************************/
@@ -101,7 +112,18 @@ heap_t *heap_crear(cmp_func_t cmp){
 }
 
 heap_t *heap_crear_arr(void *arreglo[], size_t n, cmp_func_t cmp){
-    return NULL;
+    heap_t* heap = malloc(sizeof(heap_t));
+    if(!heap) return NULL;
+    heap->datos = malloc(sizeof(void*) * n);
+    if(!heap->datos){
+        free(heap);
+        return NULL;
+    }
+    heap->datos = arreglo;
+    heap->cmp = cmp;
+    heap->tam = n;
+    heapify(heap, n, cmp);
+    return heap;
 }
 
 void heap_destruir(heap_t *heap, void (*destruir_elemento)(void *e)){
@@ -124,14 +146,17 @@ bool heap_esta_vacio(const heap_t *heap){
 
 bool heap_encolar(heap_t *heap, void *elem){
     if (!elem) return false;
-    if (heap_esta_lleno(heap)) heap_redimensionar(heap, heap->tam*FACTOR_REDIMENSION);
+    if (heap_esta_lleno(heap)) {
+        bool redimension = heap_redimensionar(heap, heap->tam*FACTOR_REDIMENSION);
+        if (!redimension) return false;
+    }
     heap->datos[heap->cant] = elem;
     heap->cant++;
     upheap(heap, heap->cant-1, heap->cmp);
     return true;
 }
 
-void *heap_ver_max(const heap_t *heap){
+void* heap_ver_max(const heap_t *heap){
     if(heap_esta_vacio(heap)){
         return NULL;
     }
@@ -140,15 +165,14 @@ void *heap_ver_max(const heap_t *heap){
 
 void *heap_desencolar(heap_t *heap){
     if(heap_esta_vacio(heap)) return NULL;
-    size_t pos_ult = heap->cant - 1;
-    void* ultimo = heap->datos[pos_ult];
-    void* primero = heap_ver_max(heap);
-    swap(ultimo, primero);
+
+    if(heap_hay_que_achicar(heap)){
+        heap_redimensionar(heap, heap->tam / FACTOR_REDIMENSION);
+    }
+    void* primero = heap->datos[0];
+    swap(heap->datos[0], heap->datos[heap->cant-1]);
     heap->cant--;
     downheap(heap, heap->tam, 0, heap->cmp);
-    if(heap_hay_que_achicar(heap)){
-        heap_redimensionar(heap, heap->tam / 2);
-    }
     return primero;
 }
 
