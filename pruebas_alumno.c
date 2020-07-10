@@ -4,7 +4,7 @@
 #include <unistd.h>  // For ssize_t in Linux.
 #include "heap.h"
 #include "testing.h"
-#define TAM_ARREGLO 10
+#define TAM_ARREGLO 5
 
 /* ******************************************************************
  *                        FUNCIONES AUXILIARES
@@ -86,7 +86,7 @@ static void prueba_heap_con_destruir()
 
 static void prueba_heap_arr()
 {
-    /* Creo arreglo */
+    /* Creo arreglo [3, 6, 4, 7, 5] */
     int valor1 = 3;
     int valor2 = 6;
     int valor3 = 4;
