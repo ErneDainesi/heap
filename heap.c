@@ -19,10 +19,10 @@ struct heap{
 /* *****************************************************************
  *                    FUNCIONES AUXILIARES
  * *****************************************************************/
-void swap(void *x, void *y) {
-    void* aux = x;
-    x = y;
-    y = aux;
+void swap (void* arreglo[], size_t pos_x, size_t pos_y) {
+	void* aux_x = arreglo[pos_x];
+	arreglo[pos_x] = arreglo[pos_y];
+	arreglo[pos_y] = aux_x;
 }
 
 size_t calcular_pos_padre(size_t hijo){
@@ -52,7 +52,7 @@ void upheap(heap_t* heap, size_t hijo, cmp_func_t cmp){
     if(hijo == 0) return;
     size_t padre = calcular_pos_padre(hijo);
     if(cmp(heap->datos[padre], heap->datos[hijo]) < 0){
-        swap(heap->datos[padre], heap->datos[hijo]);
+        swap(heap->datos, padre, hijo);
         upheap(heap, padre, cmp);
     }
 }
@@ -63,7 +63,7 @@ void downheap(heap_t* heap, size_t tam, size_t padre, cmp_func_t cmp){
     size_t hijo_der = calcular_pos_hijo(padre, 2, heap->cant);
     size_t max = calcular_max(heap->datos, cmp, padre, hijo_izq, hijo_der);
     if(cmp(heap->datos[max], heap->datos[padre]) != 0){
-        swap(heap->datos[padre], heap->datos[max]);
+        swap(heap->datos, padre, max);
         downheap(heap, tam, max, cmp);
     }
 }
@@ -170,7 +170,7 @@ void *heap_desencolar(heap_t *heap){
         heap_redimensionar(heap, heap->tam / FACTOR_REDIMENSION);
     }
     void* primero = heap->datos[0];
-    swap(heap->datos[0], heap->datos[heap->cant-1]);
+    swap(heap->datos, 0, heap->cant - 1);
     heap->cant--;
     downheap(heap, heap->tam, 0, heap->cmp);
     return primero;
