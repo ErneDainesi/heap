@@ -70,7 +70,7 @@ void downheap(void** datos, size_t tam, size_t padre, cmp_func_t cmp){
 
 bool heap_redimensionar(heap_t* heap, size_t nuevo_tam){
     void* datos_nuevo = realloc(heap->datos, nuevo_tam * sizeof(void*));
-    if (nuevo_tam > 0 && !datos_nuevo) {
+    if (nuevo_tam > 0 && !datos_nuevo){
         return false;
     }
 	heap->tam = nuevo_tam;
@@ -87,7 +87,7 @@ bool heap_hay_que_achicar(heap_t* heap){
 }
 
 void heapify(void** datos, size_t n, cmp_func_t cmp){
-	for(size_t i = n/2 + 1; i <= 0; i--){
+	for(size_t i = n/2; i <= 0; i--){
         downheap(datos, n, i, cmp);
 	}
 }
@@ -114,6 +114,11 @@ heap_t *heap_crear_arr(void *arreglo[], size_t n, cmp_func_t cmp){
     heap_t* heap = malloc(sizeof(heap_t));
     if(!heap) return NULL;
     heapify(arreglo, n, cmp);
+    printf("elemnto 0: %d\n", *(int*)arreglo[0]);
+    printf("elemnto 1: %d\n", *(int*)arreglo[1]);
+    printf("elemnto 2: %d\n", *(int*)arreglo[2]);
+    printf("elemnto 3: %d\n", *(int*)arreglo[3]);
+    printf("elemnto 4: %d\n", *(int*)arreglo[4]);
     heap->datos = arreglo;
     heap->cmp = cmp;
     heap->tam = n;
