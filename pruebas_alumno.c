@@ -9,7 +9,7 @@
  *                        FUNCIONES AUXILIARES
  * *****************************************************************/
 
-int cmp(const void* a, const void* b){
+int cmp_int(const void* a, const void* b){
     if(*(int*)a == *(int*)b) return 0;
     return *(int*)a > *(int*)b ? 1 : -1;
 }
@@ -24,7 +24,7 @@ int cmp_char(const void* a, const void* b){
 
 static void prueba_crear_heap_vacio()
 {
-    heap_t* heap = heap_crear(cmp);
+    heap_t* heap = heap_crear(cmp_int);
 
     print_test("Prueba heap crear heap vacio", heap);
     print_test("Prueba heap esta vacio", heap_esta_vacio(heap));
@@ -36,7 +36,7 @@ static void prueba_crear_heap_vacio()
 
 static void prueba_heap_encolar()
 {
-    heap_t* heap = heap_crear(cmp);
+    heap_t* heap = heap_crear(cmp_int);
 
     int valor1 = 2;
     int valor2 = 4;
@@ -59,7 +59,6 @@ static void prueba_heap_encolar()
     print_test("Prueba heap encolar valor3", heap_encolar(heap, &valor3));
     print_test("Prueba heap la cantidad de elementos es 2", heap_cantidad(heap) == 2);
     print_test("Prueba heap ver max es valor3", heap_ver_max(heap) == &valor3);
-    print_test("Prueba heap desencolar es valor3", heap_desencolar(heap) == &valor3);
 
     heap_destruir(heap, NULL);
 }
