@@ -19,10 +19,10 @@ struct heap{
 /* *****************************************************************
  *                    FUNCIONES AUXILIARES
  * *****************************************************************/
-void swap (void* arreglo[], size_t pos_x, size_t pos_y) {
-	void* aux_x = arreglo[pos_x];
-	arreglo[pos_x] = arreglo[pos_y];
-	arreglo[pos_y] = aux_x;
+void swap (void** datos, size_t pos_x, size_t pos_y) {
+	void* aux_x = datos[pos_x];
+	datos[pos_x] = datos[pos_y];
+	datos[pos_y] = aux_x;
 }
 
 size_t calcular_pos_padre(size_t hijo){
@@ -48,23 +48,23 @@ size_t calcular_max(void** datos, cmp_func_t cmp, size_t padre, size_t hijo_izq,
     return hijo_mayor;
 }
 
-void upheap(heap_t* heap, size_t hijo, cmp_func_t cmp){
+void upheap(void** datos, size_t hijo, cmp_func_t cmp){
     if(hijo == 0) return;
     size_t padre = calcular_pos_padre(hijo);
-    if(cmp(heap->datos[padre], heap->datos[hijo]) < 0){
-        swap(heap->datos, padre, hijo);
-        upheap(heap, padre, cmp);
+    if(cmp(datos[padre], datos[hijo]) < 0){
+        swap(datos, padre, hijo);
+        upheap(datos, padre, cmp);
     }
 }
 
-void downheap(heap_t* heap, size_t tam, size_t padre, cmp_func_t cmp){
+void downheap(void** datos, size_t tam, size_t padre, cmp_func_t cmp){
     if(padre >= tam - 1) return;
-    size_t hijo_izq = calcular_pos_hijo(padre, 1, heap->cant);
-    size_t hijo_der = calcular_pos_hijo(padre, 2, heap->cant);
-    size_t max = calcular_max(heap->datos, cmp, padre, hijo_izq, hijo_der);
-    if(cmp(heap->datos[max], heap->datos[padre]) != 0){
-        swap(heap->datos, padre, max);
-        downheap(heap, tam, max, cmp);
+    size_t hijo_izq = calcular_pos_hijo(padre, 1, tam);
+    size_t hijo_der = calcular_pos_hijo(padre, 2, tam);
+    size_t max = calcular_max(datos, cmp, padre, hijo_izq, hijo_der);
+    if(cmp(datos[max], datos[padre]) != 0){
+        swap(datos, padre, max);
+        downheap(datos, tam, max, cmp);
     }
 }
 
@@ -86,10 +86,9 @@ bool heap_hay_que_achicar(heap_t* heap){
     return heap->cant * 4 <= heap->tam;
 }
 
-
-void heapify(heap_t* heap, size_t n, cmp_func_t cmp){
-	for(size_t i = n-1; i <= 0; i--){
-        downheap(heap, n, i, cmp);
+void heapify(void** datos, size_t n, cmp_func_t cmp){
+	for(size_t i = n/2 + 1; i <= 0; i--){
+        downheap(datos, n, i, cmp);
 	}
 }
 
@@ -114,15 +113,16 @@ heap_t *heap_crear(cmp_func_t cmp){
 heap_t *heap_crear_arr(void *arreglo[], size_t n, cmp_func_t cmp){
     heap_t* heap = malloc(sizeof(heap_t));
     if(!heap) return NULL;
-    heap->datos = malloc(sizeof(void*) * n);
-    if(!heap->datos){
-        free(heap);
-        return NULL;
-    }
+    heapify(arreglo, n, cmp);
     heap->datos = arreglo;
     heap->cmp = cmp;
     heap->tam = n;
-    heapify(heap, n, cmp);
+    heap->cant = 0;
+    for(size_t i = 0; i < n; i++){
+        if(arreglo[i]){
+            heap->cant++;
+        }
+    }
     return heap;
 }
 
@@ -152,7 +152,7 @@ bool heap_encolar(heap_t *heap, void *elem){
     }
     heap->datos[heap->cant] = elem;
     heap->cant++;
-    upheap(heap, heap->cant-1, heap->cmp);
+    upheap(heap->datos, heap->cant-1, heap->cmp);
     return true;
 }
 
@@ -172,7 +172,7 @@ void *heap_desencolar(heap_t *heap){
     void* primero = heap->datos[0];
     swap(heap->datos, 0, heap->cant - 1);
     heap->cant--;
-    downheap(heap, heap->tam, 0, heap->cmp);
+    downheap(heap->datos, heap->cant, 0, heap->cmp);
     return primero;
 }
 
@@ -180,4 +180,12 @@ void *heap_desencolar(heap_t *heap){
  *                    HEAP SORT
  * *****************************************************************/
 
-void heap_sort(void *elementos[], size_t cant, cmp_func_t cmp);
+void heap_sort(void *elementos[], size_t cant, cmp_func_t cmp){
+    heap_t* heap = heap_crear_arr(elementos, cant, cmp);
+    size_t pos_ult = cant - 1;
+    for(size_t i = 0; i < cant; i++){
+        swap(heap->datos, 0, pos_ult);
+        downheap(heap->datos, heap->tam, 0, cmp);
+        pos_ult--;
+    }
+}
