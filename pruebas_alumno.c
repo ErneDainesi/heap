@@ -4,7 +4,7 @@
 #include <unistd.h>  // For ssize_t in Linux.
 #include "heap.h"
 #include "testing.h"
-#define TAM_ARREGLO 5
+#define TAM_ARREGLO 10
 
 /* ******************************************************************
  *                        FUNCIONES AUXILIARES
@@ -92,7 +92,7 @@ static void prueba_heap_arr()
     int valor3 = 4;
     int valor4 = 7;
     int valor5 = 5;
-    void** arr = malloc(sizeof(void*) * TAM_ARREGLO);
+    void** arr = calloc(1, sizeof(void*) * TAM_ARREGLO);
     arr[0] = &valor1;
     arr[1] = &valor2;
     arr[2] = &valor3;
@@ -105,7 +105,7 @@ static void prueba_heap_arr()
     print_test("Prueba heap crear desde arreglo", heap);
     print_test("Prueba heap ver max es valor4", heap_ver_max(heap) == &valor4);
     print_test("Prueba heap no esta vacio", !heap_esta_vacio(heap));
-    print_test("Prueba heap la cantidad de elementos es 5", heap_cantidad(heap) == TAM_ARREGLO);
+    print_test("Prueba heap la cantidad de elementos es 5", heap_cantidad(heap) == 5);
 
     /* Desencolo y encolo elementos y pruebo que se mantenga la invariante de heap */
     print_test("Prueba heap desencolar es valor4", heap_desencolar(heap) == &valor4);
@@ -113,10 +113,10 @@ static void prueba_heap_arr()
     print_test("Prueba heap ver max es valor2", heap_ver_max(heap) == &valor2);
     print_test("Prueba heap encolar valor4", heap_encolar(heap, &valor4));
     print_test("Prueba heap ver max es valor4", heap_ver_max(heap) == &valor4);
-    print_test("Prueba heap la cantidad de elementos es 5", heap_cantidad(heap) == TAM_ARREGLO);
+    print_test("Prueba heap la cantidad de elementos es 5", heap_cantidad(heap) == 5);
 
     /* Desencolo todos los elementos y pruebo que haya quedado vacio */
-    for(size_t i = 0; i < TAM_ARREGLO; i++){
+    for(size_t i = 0; i < heap_cantidad(heap); i++){
         heap_desencolar(heap);
     }
 
