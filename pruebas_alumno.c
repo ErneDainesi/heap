@@ -25,6 +25,7 @@ int cmp_char(const void* a, const void* b){
 
 static void prueba_crear_heap_vacio()
 {
+    printf("\n **** PRUEBA HEAP VACIO ****\n");
     heap_t* heap = heap_crear(cmp_int);
 
     print_test("Prueba heap crear heap vacio", heap);
@@ -37,6 +38,7 @@ static void prueba_crear_heap_vacio()
 
 static void prueba_heap_encolar()
 {
+    printf("\n **** PRUEBA HEAP ENCOLAR ****\n");
     heap_t* heap = heap_crear(cmp_int);
 
     int valor1 = 2;
@@ -66,6 +68,7 @@ static void prueba_heap_encolar()
 
 static void prueba_heap_con_destruir()
 {
+    printf("\n **** PRUEBA HEAP CON DESTRUIR ****\n");
     heap_t* heap = heap_crear(cmp_char);
 
     /* Pide memoria para 4 valores */
@@ -86,18 +89,14 @@ static void prueba_heap_con_destruir()
 
 static void prueba_heap_arr()
 {
+    printf("\n **** PRUEBA HEAP CREAR DESDE ARREGLO ****\n");
     /* Creo arreglo [3, 6, 4, 7, 5] */
     int valor1 = 3;
     int valor2 = 6;
     int valor3 = 4;
     int valor4 = 7;
     int valor5 = 5;
-    void** arr = calloc(1, sizeof(void*) * TAM_ARREGLO);
-    arr[0] = &valor1;
-    arr[1] = &valor2;
-    arr[2] = &valor3;
-    arr[3] = &valor4;
-    arr[4] = &valor5;
+    void* arr[] = {&valor1, &valor2, &valor3, &valor4, &valor5};
 
     heap_t* heap = heap_crear_arr(arr, TAM_ARREGLO, cmp_int);
 
