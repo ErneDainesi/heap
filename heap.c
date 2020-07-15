@@ -37,17 +37,6 @@ size_t calcular_pos_hijo(size_t padre, size_t n, size_t cant){
     return 2 * padre + n;
 }
 
-size_t calcular_hijo_mayor(void** datos, cmp_func_t cmp, size_t hijo_izq, size_t hijo_der){
-    if (cmp(datos[hijo_der], datos[hijo_izq]) >= 0) return hijo_der;
-	return hijo_izq;
-}
-
-size_t calcular_max(void** datos, cmp_func_t cmp, size_t padre, size_t hijo_izq, size_t hijo_der){
-    size_t hijo_mayor = calcular_hijo_mayor(datos, cmp, hijo_izq, hijo_der);
-    if (cmp(datos[padre], datos[hijo_mayor]) >= 0) return padre;
-    return hijo_mayor;
-}
-
 void upheap(void** datos, size_t hijo, cmp_func_t cmp){
     if(hijo == 0) return;
     size_t padre = calcular_pos_padre(hijo);
@@ -57,12 +46,21 @@ void upheap(void** datos, size_t hijo, cmp_func_t cmp){
     }
 }
 
+size_t calcular_max(void** datos, cmp_func_t cmp, size_t padre, size_t hijo_izq, size_t hijo_der, size_t cant){
+    size_t max = padre;
+    if( (hijo_izq < cant) && (cmp(datos[hijo_izq], datos[max]) > 0) )
+        max = hijo_izq;
+    if( (hijo_der < cant) && (cmp(datos[hijo_der], datos[max]) > 0) )
+        max = hijo_der;
+    return max;
+}
+
 void downheap(void** datos, size_t tam, size_t padre, cmp_func_t cmp){
-    if(padre >= tam - 1) return;
+    if(padre >= tam) return;
     size_t hijo_izq = calcular_pos_hijo(padre, 1, tam);
     size_t hijo_der = calcular_pos_hijo(padre, 2, tam);
-    size_t max = calcular_max(datos, cmp, padre, hijo_izq, hijo_der);
-    if(cmp(datos[max], datos[padre]) != 0){
+    size_t max = calcular_max(datos, cmp, padre, hijo_izq, hijo_der, tam);
+    if(max != padre){
         swap(datos, padre, max);
         downheap(datos, tam, max, cmp);
     }
@@ -78,18 +76,18 @@ bool heap_redimensionar(heap_t* heap, size_t nuevo_tam){
     return true;
 }
 
+void heapify(void** datos, size_t n, cmp_func_t cmp){
+	for(size_t i = n/2; i >= 0; i--){
+        downheap(datos, n, i, cmp);
+	}
+}
+
 bool heap_esta_lleno(heap_t* heap){
     return heap->cant == heap->tam;
 }
 
 bool heap_hay_que_achicar(heap_t* heap){
     return heap->cant * 4 <= heap->tam;
-}
-
-void heapify(void** datos, size_t n, cmp_func_t cmp){
-	for(size_t i = n/2; i <= 0; i--){
-        downheap(datos, n, i, cmp);
-	}
 }
 
 /* *****************************************************************
@@ -113,12 +111,11 @@ heap_t *heap_crear(cmp_func_t cmp){
 heap_t *heap_crear_arr(void *arreglo[], size_t n, cmp_func_t cmp){
     heap_t* heap = malloc(sizeof(heap_t));
     if(!heap) return NULL;
-    heapify(arreglo, n, cmp);
-    printf("elemnto 0: %d\n", *(int*)arreglo[0]);
-    printf("elemnto 1: %d\n", *(int*)arreglo[1]);
-    printf("elemnto 2: %d\n", *(int*)arreglo[2]);
-    printf("elemnto 3: %d\n", *(int*)arreglo[3]);
-    printf("elemnto 4: %d\n", *(int*)arreglo[4]);
+    // printf("elemnto 0: %d\n", *(int*)arreglo[0]);
+    // printf("elemnto 1: %d\n", *(int*)arreglo[1]);
+    // printf("elemnto 2: %d\n", *(int*)arreglo[2]);
+    // printf("elemnto 3: %d\n", *(int*)arreglo[3]);
+    // printf("elemnto 4: %d\n", *(int*)arreglo[4]);
     heap->datos = arreglo;
     heap->cmp = cmp;
     heap->tam = n;
@@ -128,6 +125,7 @@ heap_t *heap_crear_arr(void *arreglo[], size_t n, cmp_func_t cmp){
             heap->cant++;
         }
     }
+    heapify(arreglo, heap->cant, cmp);
     return heap;
 }
 
