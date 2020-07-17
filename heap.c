@@ -184,7 +184,11 @@ void heap_sort(void *elementos[], size_t cant, cmp_func_t cmp){
     size_t pos_ult = cant - 1;
     for(size_t i = 0; i < cant; i++){
         swap(heap->datos, 0, pos_ult);
-        downheap(heap->datos, heap->tam, 0, cmp);
+        downheap(heap->datos, pos_ult, 0, cmp);
         pos_ult--;
     }
+    for(size_t i = 0; i < heap->cant; i++){
+        elementos[i] = heap->datos[i];
+    }
+    heap_destruir(heap, NULL);
 }
