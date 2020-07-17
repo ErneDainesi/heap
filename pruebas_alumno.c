@@ -20,6 +20,19 @@ int cmp_char(const void* a, const void* b){
     return strcmp(a, b);
 }
 
+bool comparar_arreglos(void* arr1[], void* arr2[], size_t n){
+    bool son_iguales = true;
+    for (size_t i=0; i < n; i++){
+        printf("ARREGLO1: %d ---- ", *(int*) arr1[i]);
+        printf("ARREGLO2: %d", *(int*) arr2[i]);
+        printf("\n");
+        if ( *(int*) arr1[i] != *(int*) arr2[i]){
+            son_iguales = false;
+        }
+    }
+    return son_iguales;
+}
+
 /* ******************************************************************
  *                        PRUEBAS UNITARIAS
  * *****************************************************************/
@@ -173,20 +186,9 @@ void pruebas_heap_sort(){
     int valor5 = 5;
     void* arr[] = {&valor1, &valor2, &valor3, &valor4, &valor5};
 
-    /* Creo arreglo desordenado [3, 4, 5, 6, 7] */
+    /* Creo arreglo ordenado [3, 4, 5, 6, 7] */
     void* arreglo_ordenado[] = {&valor1, &valor3, &valor5, &valor2, &valor4};
-
-
     heap_sort(arr, 5, cmp_int);
-
-    bool comparar_arreglos(void* arr1[], void* arr2[], size_t n){
-        bool son_iguales = true;
-        for (size_t i=0; i < n; i++){
-            if (*(*int)arr1[i] != *(*int)arr2[i])
-                son_iguales = false;
-        }
-        return son_iguales;
-    }
     
     bool iguales = comparar_arreglos(arr, arreglo_ordenado, 5);
 
