@@ -163,6 +163,36 @@ static void prueba_heap_volumen(size_t largo, bool debug)
 
     free(claves);
 }
+void pruebas_heap_sort(){
+    printf("\n ** PRUEBA HEAPSORT **\n");
+    /* Creo arreglo desordenado [3, 6, 4, 7, 5] */
+    int valor1 = 3;
+    int valor2 = 6;
+    int valor3 = 4;
+    int valor4 = 7;
+    int valor5 = 5;
+    void* arr[] = {&valor1, &valor2, &valor3, &valor4, &valor5};
+
+    /* Creo arreglo desordenado [3, 4, 5, 6, 7] */
+    void* arreglo_ordenado[] = {&valor1, &valor3, &valor5, &valor2, &valor4};
+
+
+    heap_sort(arr, 5, cmp_int);
+
+    bool comparar_arreglos(void* arr1[], void* arr2[], size_t n){
+        bool son_iguales = true;
+        for (size_t i=0; i < n; i++){
+            if (*(*int)arr1[i] != *(*int)arr2[i])
+                son_iguales = false;
+        }
+        return son_iguales;
+    }
+    
+    bool iguales = comparar_arreglos(arr, arreglo_ordenado, 5);
+
+    print_test("El arreglo se encuentra ordenado luego de aplicar heapsort", iguales == true);
+}
+
 
 void pruebas_heap_alumno(void){
     prueba_crear_heap_vacio();
@@ -170,4 +200,5 @@ void pruebas_heap_alumno(void){
     prueba_heap_con_destruir();
     prueba_heap_arr();
     prueba_heap_volumen(1000, true);
+    pruebas_heap_sort();
 }
