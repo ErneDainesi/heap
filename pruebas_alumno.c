@@ -23,9 +23,6 @@ int cmp_char(const void* a, const void* b){
 bool comparar_arreglos(void* arr1[], void* arr2[], size_t n){
     bool son_iguales = true;
     for (size_t i=0; i < n; i++){
-        printf("ARREGLO1: %d ---- ", *(int*) arr1[i]);
-        printf("ARREGLO2: %d", *(int*) arr2[i]);
-        printf("\n");
         if ( *(int*) arr1[i] != *(int*) arr2[i]){
             son_iguales = false;
         }
@@ -176,6 +173,7 @@ static void prueba_heap_volumen(size_t largo, bool debug)
 
     free(claves);
 }
+
 void pruebas_heap_sort(){
     printf("\n ** PRUEBA HEAPSORT **\n");
     /* Creo arreglo desordenado [3, 6, 4, 7, 5] */
@@ -188,9 +186,9 @@ void pruebas_heap_sort(){
 
     /* Creo arreglo ordenado [3, 4, 5, 6, 7] */
     void* arreglo_ordenado[] = {&valor1, &valor3, &valor5, &valor2, &valor4};
-    heap_sort(arr, 5, cmp_int);
+    heap_sort(arr, TAM_ARREGLO, cmp_int);
     
-    bool iguales = comparar_arreglos(arr, arreglo_ordenado, 5);
+    bool iguales = comparar_arreglos(arr, arreglo_ordenado, TAM_ARREGLO);
 
     print_test("El arreglo se encuentra ordenado luego de aplicar heapsort", iguales == true);
 }
