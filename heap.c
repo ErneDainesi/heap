@@ -111,7 +111,13 @@ heap_t *heap_crear(cmp_func_t cmp){
 heap_t *heap_crear_arr(void *arreglo[], size_t n, cmp_func_t cmp){
     heap_t* heap = malloc(sizeof(heap_t));
     if(!heap) return NULL;
-    heap->datos = arreglo;
+
+    void** copia_arreglo = malloc(sizeof(void*) * n);
+	if (!copia_arreglo) return NULL;
+	for(size_t i = 0; i<n; i++){
+		copia_arreglo[i] = arreglo[i];
+	}
+    heap->datos = copia_arreglo;
     heap->cmp = cmp;
     heap->tam = n;
     heap->cant = n;
