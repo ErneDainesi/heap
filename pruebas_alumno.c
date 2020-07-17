@@ -130,9 +130,44 @@ static void prueba_heap_arr()
     heap_destruir(heap, NULL);
 }
 
+static void prueba_heap_volumen(size_t largo, bool debug)
+{
+    printf("\n **** PRUEBA HEAP VOLUMEN ****\n");
+    heap_t* heap = heap_crear(cmp_char);
+
+    const size_t largo_clave = 10;
+    char (*claves)[largo_clave] = malloc(largo * largo_clave);
+
+    /* Inserta 'largo' claves en el heap */
+    bool ok = true;
+    for (unsigned i = 0; i < largo; i++) {
+        sprintf(claves[i], "%08d", i);
+        ok = heap_encolar(heap, claves[i]);
+        if (!ok) break;
+    }
+
+    if (debug) print_test("Prueba heap almacenar muchos elementos", ok);
+    if (debug) print_test("Prueba heap la cantidad de elementos es correcta", heap_cantidad(heap) == largo);
+
+    /* Desencolo todos los elementos del heap */
+    for (size_t i = 0; i < largo; i++) {
+        ok = heap_desencolar(heap) != NULL;
+        if (!ok) break;
+    }
+
+    if (debug) print_test("Prueba heap borrar muchos elementos", ok);
+    if (debug) print_test("Prueba heap la cantidad de elementos es 0", heap_cantidad(heap) == 0);
+
+    /* Destruye el heap*/
+    heap_destruir(heap, NULL);
+
+    free(claves);
+}
+
 void pruebas_heap_alumno(void){
     prueba_crear_heap_vacio();
     prueba_heap_encolar();
     prueba_heap_con_destruir();
     prueba_heap_arr();
+    prueba_heap_volumen(1000, true);
 }
