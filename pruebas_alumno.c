@@ -119,7 +119,7 @@ static void prueba_heap_arr()
     print_test("Prueba heap la cantidad de elementos es 5", heap_cantidad(heap) == 5);
 
     /* Desencolo todos los elementos y pruebo que haya quedado vacio */
-    for(size_t i = 0; i < heap_cantidad(heap); i++){
+    for(size_t i = 0; i < TAM_ARREGLO; i++){
         heap_desencolar(heap);
     }
 
