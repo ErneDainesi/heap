@@ -5,7 +5,6 @@
 #include <unistd.h>  // For ssize_t in Linux.
 #include "heap.h"
 #include "testing.h"
-#define TAM_ARREGLO 5
 
 /* ******************************************************************
  *                        FUNCIONES AUXILIARES
@@ -112,7 +111,7 @@ static void prueba_heap_arr()
     int valor5 = 5;
     void* arr[] = {&valor1, &valor2, &valor3, &valor4, &valor5};
 
-    heap_t* heap = heap_crear_arr(arr, TAM_ARREGLO, cmp_int);
+    heap_t* heap = heap_crear_arr(arr, 5, cmp_int);
 
     /* Pruebo que se haya creado bien el heap */
     print_test("Prueba heap crear desde arreglo", heap);
@@ -129,7 +128,7 @@ static void prueba_heap_arr()
     print_test("Prueba heap la cantidad de elementos es 5", heap_cantidad(heap) == 5);
 
     /* Desencolo todos los elementos y pruebo que haya quedado vacio */
-    for(size_t i = 0; i < TAM_ARREGLO; i++){
+    for(size_t i = 0; i < 5; i++){
         heap_desencolar(heap);
     }
 
@@ -186,9 +185,9 @@ void pruebas_heap_sort(){
 
     /* Creo arreglo ordenado [3, 4, 5, 6, 7] */
     void* arreglo_ordenado[] = {&valor1, &valor3, &valor5, &valor2, &valor4};
-    heap_sort(arr, TAM_ARREGLO, cmp_int);
+    heap_sort(arr, 5, cmp_int);
     
-    bool iguales = comparar_arreglos(arr, arreglo_ordenado, TAM_ARREGLO);
+    bool iguales = comparar_arreglos(arr, arreglo_ordenado, 5);
 
     print_test("El arreglo se encuentra ordenado luego de aplicar heapsort", iguales == true);
 }
@@ -199,6 +198,6 @@ void pruebas_heap_alumno(void){
     prueba_heap_encolar();
     prueba_heap_con_destruir();
     prueba_heap_arr();
-    prueba_heap_volumen(1000, true);
+    prueba_heap_volumen(100000, true);
     pruebas_heap_sort();
 }
